@@ -1,0 +1,16 @@
+{
+  "sections": {
+    "booking": {
+      "type": "ggs-booking-request",
+      "settings": {
+        "hero_title": "Book your GGs Only coaching slot",
+        "hero_subtitle": "Tell us about your rank, goals, and schedule—we’ll follow up fast.",
+        "hero_note": "We currently coach up to Grand Champion 1. Replies land in your inbox within 24 hours.",
+        "button_label": "Request session"
+      }
+    }
+  },
+  "order": [
+    "booking"
+  ]
+}

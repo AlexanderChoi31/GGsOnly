@@ -22,6 +22,10 @@ GGs Only Coaching section
   if pct_value > 100
     assign pct_value = 100
   endif
+  assign booking_url = section.settings.booking_url
+  if booking_url == blank
+    assign booking_url = '/pages/ggs-only-booking'
+  endif
 %}
 
 <section class="ggs-only-coaching">
@@ -51,12 +55,11 @@ GGs Only Coaching section
                 {% liquid
                   assign cta_label = block.settings.cta_label | default: 'Book a session'
                   assign cta_url = block.settings.cta_url
+                  if cta_url == blank
+                    assign cta_url = booking_url
+                  endif
                 %}
-                {% if cta_url != blank %}
-                  <a class="ggs-only-btn" href="{{ cta_url }}">{{ cta_label }}</a>
-                {% else %}
-                  <a class="ggs-only-btn" href="#ggs-only-contact">{{ cta_label }}</a>
-                {% endif %}
+                <a class="ggs-only-btn" href="{{ cta_url }}">{{ cta_label }}</a>
               </div>
             </article>
           {% endif %}
@@ -67,7 +70,7 @@ GGs Only Coaching section
             <h3 class="ggs-only-card-title">Basic Training</h3>
             <p class="ggs-only-card-desc">Fundamentals, mechanics check, and focused drills to level up consistency.</p>
             <div class="ggs-only-price">$20 <span class="ggs-only-price-unit">/ hr</span></div>
-            <a class="ggs-only-btn" href="#ggs-only-contact">Book a session</a>
+            <a class="ggs-only-btn" href="{{ booking_url }}">Book a session</a>
           </div>
         </article>
         <article class="ggs-only-card">
@@ -75,15 +78,15 @@ GGs Only Coaching section
             <h3 class="ggs-only-card-title">Advanced Coaching</h3>
             <p class="ggs-only-card-desc">Replay analysis, rotations, and detailed training packs tailored to your goals.</p>
             <div class="ggs-only-price">$35 <span class="ggs-only-price-unit">/ hr</span></div>
-            <a class="ggs-only-btn" href="#ggs-only-contact">Book a session</a>
+            <a class="ggs-only-btn" href="{{ booking_url }}">Book a session</a>
           </div>
         </article>
       {% endif %}
     </div>
 
     <section class="ggs-only-stats">
-      <h2 class="ggs-only-stats-title">Where {{ section.settings.gc_rank | default: 'Grand Champion 2' }} sits</h2>
-      <p class="ggs-only-stats-sub">Approximate percentile placement (adjust in settings).</p>
+      <h2 class="ggs-only-stats-title">Why players book with GGs Only</h2>
+      <p class="ggs-only-stats-sub">We benchmark every plan against {{ section.settings.gc_rank | default: 'Grand Champion 2' }} expectations, so you know exactly what top-tier play looks like.</p>
       <div class="ggs-only-bar">
         <div class="ggs-only-bar-fill"></div>
         <span class="ggs-only-marker" style="left: {{ pct_value }}%;" aria-label="Top {{ pct_value }} percent"></span>
@@ -91,7 +94,13 @@ GGs Only Coaching section
       <div class="ggs-only-bar-label">
         {{ section.settings.gc_rank | default: 'GC2' }} &asymp; Top {{ pct_value }}%
       </div>
-      <p class="ggs-only-stats-note">Percentile is for illustration. Update with your official figures or personal stats.</p>
+      <ul class="ggs-only-stats-benefits">
+        <li>Replay-first reviews that surface the decisions costing you rank.</li>
+        <li>Targeted mechanics drills built for {{ section.settings.age_range | default: '18–23' }} players.</li>
+        <li>Accountability checkpoints between sessions to keep the climb steady.</li>
+      </ul>
+      <p class="ggs-only-stats-note ggs-only-stats-limit">We currently coach players up to Grand Champion 1. If you are higher, reach out and we’ll point you to trusted partners.</p>
+      <p class="ggs-only-stats-note">Percentile shown is for illustration—swap in your official stats anytime.</p>
     </section>
 
     {% if section.settings.show_contact %}
@@ -290,10 +299,42 @@ GGs Only Coaching section
       font-weight: 600;
     }
 
+    .ggs-only-stats-benefits {
+      margin: 8px auto 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 10px;
+      max-width: min(620px, 100%);
+      text-align: left;
+    }
+
+    .ggs-only-stats-benefits li {
+      position: relative;
+      padding-left: 24px;
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--text-base);
+    }
+
+    .ggs-only-stats-benefits li::before {
+      content: '>';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-size: 22px;
+      line-height: 1;
+      top: -2px;
+    }
+
     .ggs-only-stats-note {
       margin: 0;
       font-size: 13px;
       color: var(--text-muted);
+    }
+
+    .ggs-only-stats-limit {
+      color: var(--text-base);
     }
 
     .ggs-only-contact {
@@ -392,6 +433,11 @@ GGs Only Coaching section
       "id": "gc_percentile",
       "label": "Percentile (Top X%)",
       "info": "Enter a number between 0 and 100. Leave blank to show 0.6 by default."
+    },
+    {
+      "type": "url",
+      "id": "booking_url",
+      "label": "Default booking page URL"
     },
     {
       "type": "checkbox",

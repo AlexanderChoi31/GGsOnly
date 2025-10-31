@@ -1,0 +1,254 @@
+{% comment %}
+GGs Only dedicated booking request section.
+- Hero copy configurable through section settings.
+- Contact form posts to Shopify contact endpoint using the 'contact' form handler.
+- Collects basic player details plus scheduling preferences.
+{% endcomment %}
+
+<section class="ggs-booking-request">
+  <div class="ggs-booking-wrap">
+    <header class="ggs-booking-hero">
+      <h1 class="ggs-booking-title">{{ section.settings.hero_title }}</h1>
+      {% if section.settings.hero_subtitle != blank %}
+        <p class="ggs-booking-subtitle">{{ section.settings.hero_subtitle }}</p>
+      {% endif %}
+      {% if section.settings.hero_note != blank %}
+        <p class="ggs-booking-note">{{ section.settings.hero_note }}</p>
+      {% endif %}
+    </header>
+
+    {% liquid
+      assign status_class = 'ggs-booking-status'
+    %}
+    {% form 'contact', id: 'GGsBookingForm', class: 'ggs-booking-form' %}
+      {% if form.posted_successfully? %}
+        <p class="{{ status_class }} ggs-booking-status--success" tabindex="-1">
+          Thanks! We’ll review your request and reply within 24 hours.
+        </p>
+      {% elsif form.errors %}
+        <div class="{{ status_class }} ggs-booking-status--error" role="alert" tabindex="-1">
+          Something went wrong. Check the highlighted fields and try again.
+        </div>
+      {% endif %}
+
+      <input type="hidden" name="contact[Source]" value="GGs Only booking page">
+
+      <div class="ggs-booking-grid">
+        <label class="ggs-booking-field">
+          <span>Name *</span>
+          <input type="text" name="contact[name]" required placeholder="Your full name">
+        </label>
+
+        <label class="ggs-booking-field">
+          <span>Email *</span>
+          <input type="email" name="contact[email]" required placeholder="you@example.com">
+        </label>
+
+        <label class="ggs-booking-field">
+          <span>Discord / Primary contact handle</span>
+          <input type="text" name="contact[Discord]" placeholder="DiscordTag#0000 or phone">
+        </label>
+
+        <label class="ggs-booking-field">
+          <span>Current rank</span>
+          <input type="text" name="contact[Current rank]" placeholder="e.g. C3 Div 3">
+        </label>
+
+        <label class="ggs-booking-field ggs-booking-field--full">
+          <span>Goals for coaching *</span>
+          <textarea name="contact[Goals]" rows="4" required placeholder="What are you hoping to improve?"></textarea>
+        </label>
+
+        <label class="ggs-booking-field ggs-booking-field--full">
+          <span>Preferred coaching times</span>
+          <textarea name="contact[Preferred times]" rows="3" placeholder="Share a few days/time windows that work best."></textarea>
+        </label>
+      </div>
+
+      <div class="ggs-booking-actions">
+        <button type="submit" class="ggs-booking-submit">{{ section.settings.button_label }}</button>
+      </div>
+    {% endform %}
+  </div>
+
+  <style>
+    .ggs-booking-request {
+      padding: min(8vw, 72px) 0;
+      background: linear-gradient(135deg, #0a144e, #030826);
+      color: #f5f8ff;
+    }
+
+    .ggs-booking-wrap {
+      width: min(900px, 92%);
+      margin: 0 auto;
+      display: grid;
+      gap: 28px;
+    }
+
+    .ggs-booking-hero {
+      text-align: center;
+      display: grid;
+      gap: 12px;
+    }
+
+    .ggs-booking-title {
+      margin: 0;
+      font-size: clamp(32px, 5vw, 50px);
+      letter-spacing: 0.3px;
+    }
+
+    .ggs-booking-subtitle {
+      margin: 0;
+      font-size: clamp(16px, 2vw, 20px);
+      color: rgba(245, 248, 255, 0.8);
+    }
+
+    .ggs-booking-note {
+      margin: 0;
+      font-size: 15px;
+      color: rgba(245, 248, 255, 0.7);
+    }
+
+    .ggs-booking-form {
+      background: rgba(10, 20, 78, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 28px;
+      backdrop-filter: blur(10px);
+      display: grid;
+      gap: 24px;
+    }
+
+    .ggs-booking-status {
+      margin: 0;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+    }
+
+    .ggs-booking-status--success {
+      background: rgba(74, 214, 152, 0.15);
+      color: #9efad4;
+      border: 1px solid rgba(74, 214, 152, 0.45);
+    }
+
+    .ggs-booking-status--error {
+      background: rgba(255, 99, 132, 0.18);
+      color: #ff99b0;
+      border: 1px solid rgba(255, 99, 132, 0.4);
+    }
+
+    .ggs-booking-grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .ggs-booking-field {
+      display: grid;
+      gap: 6px;
+      font-size: 14px;
+    }
+
+    .ggs-booking-field span {
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    .ggs-booking-field input,
+    .ggs-booking-field textarea {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(3, 8, 38, 0.65);
+      color: #f5f8ff;
+      padding: 11px 14px;
+      font-size: 15px;
+    }
+
+    .ggs-booking-field textarea {
+      resize: vertical;
+      min-height: 110px;
+    }
+
+    .ggs-booking-field input::placeholder,
+    .ggs-booking-field textarea::placeholder {
+      color: rgba(245, 248, 255, 0.5);
+    }
+
+    .ggs-booking-field--full {
+      grid-column: 1 / -1;
+    }
+
+    .ggs-booking-actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .ggs-booking-submit {
+      border: none;
+      border-radius: 14px;
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #69b0ff, #4ea3ff);
+      color: #041022;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    .ggs-booking-submit:hover {
+      transform: translateY(-2px);
+      opacity: 0.9;
+    }
+
+    @media (max-width: 640px) {
+      .ggs-booking-form {
+        padding: 22px;
+      }
+
+      .ggs-booking-actions {
+        justify-content: center;
+      }
+    }
+  </style>
+</section>
+
+{% schema %}
+{
+  "name": "GGs booking request",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "hero_title",
+      "label": "Heading",
+      "default": "Book your GGs Only coaching slot"
+    },
+    {
+      "type": "text",
+      "id": "hero_subtitle",
+      "label": "Subheading",
+      "default": "Drop your details and we’ll match you with the right coach."
+    },
+    {
+      "type": "text",
+      "id": "hero_note",
+      "label": "Supporting note",
+      "default": "Average reply time: under 24 hours."
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Submit button label",
+      "default": "Request session"
+    }
+  ],
+  "presets": [
+    {
+      "name": "GGs booking request"
+    }
+  ]
+}
+{% endschema %}
