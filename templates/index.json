@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "ggs_only": {
+      "type": "ggs-only-coaching",
+      "settings": {
+        "show_contact": true
+      }
+    }
+  },
+  "order": [
+    "ggs_only"
+  ]
+}
