@@ -8,13 +8,24 @@ GGs Only dedicated booking request section.
 <section class="ggs-booking-request">
   <div class="ggs-booking-wrap">
     <header class="ggs-booking-hero">
-      <h1 class="ggs-booking-title">{{ section.settings.hero_title }}</h1>
-      {% if section.settings.hero_subtitle != blank %}
-        <p class="ggs-booking-subtitle">{{ section.settings.hero_subtitle }}</p>
-      {% endif %}
-      {% if section.settings.hero_note != blank %}
-        <p class="ggs-booking-note">{{ section.settings.hero_note }}</p>
-      {% endif %}
+      <div class="ggs-booking-hero-text">
+        <span class="ggs-booking-pill">GGs Only Coaching</span>
+        <h1 class="ggs-booking-title">{{ section.settings.hero_title }}</h1>
+        {% if section.settings.hero_subtitle != blank %}
+          <p class="ggs-booking-subtitle">{{ section.settings.hero_subtitle }}</p>
+        {% endif %}
+      </div>
+      <div class="ggs-booking-hero-card">
+        <h3>What to expect</h3>
+        <ul>
+          <li>Custom improvement plan after every session</li>
+          <li>Accountability check-ins between bookings</li>
+          <li>Replies within 24 hours (GC1 and below)</li>
+        </ul>
+        {% if section.settings.hero_note != blank %}
+          <p class="ggs-booking-note">{{ section.settings.hero_note }}</p>
+        {% endif %}
+      </div>
     </header>
 
     {% liquid
@@ -86,21 +97,89 @@ GGs Only dedicated booking request section.
     }
 
     .ggs-booking-hero {
-      text-align: center;
+      display: grid;
+      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      align-items: stretch;
+    }
+
+    .ggs-booking-hero-text {
       display: grid;
       gap: 12px;
     }
 
+    .ggs-booking-pill {
+      justify-self: start;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #99b9ff;
+      font-size: 13px;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
     .ggs-booking-title {
       margin: 0;
-      font-size: clamp(32px, 5vw, 50px);
+      font-size: clamp(34px, 5vw, 54px);
       letter-spacing: 0.3px;
     }
 
     .ggs-booking-subtitle {
       margin: 0;
       font-size: clamp(16px, 2vw, 20px);
+      color: rgba(245, 248, 255, 0.85);
+      line-height: 1.6;
+    }
+
+    .ggs-booking-hero-card {
+      border-radius: 18px;
+      background: rgba(3, 8, 38, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 20px 22px;
+      display: grid;
+      gap: 10px;
+      box-shadow: 0 12px 30px rgba(2, 6, 30, 0.45);
+    }
+
+    .ggs-booking-hero-card h3 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: 0.5px;
+    }
+
+    .ggs-booking-hero-card ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 6px;
+      font-size: 15px;
       color: rgba(245, 248, 255, 0.8);
+    }
+
+    .ggs-booking-hero-card li {
+      position: relative;
+      padding-left: 20px;
+    }
+
+    .ggs-booking-hero-card li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 7px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #69b0ff, #4ea3ff);
+    }
+
+    .ggs-booking-hero-card .ggs-booking-note {
+      font-size: 13px;
+      color: rgba(245, 248, 255, 0.65);
+      margin-top: 4px;
+    }
     }
 
     .ggs-booking-note {
@@ -110,13 +189,14 @@ GGs Only dedicated booking request section.
     }
 
     .ggs-booking-form {
-      background: rgba(10, 20, 78, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 20px;
-      padding: 28px;
-      backdrop-filter: blur(10px);
+      background: rgba(10, 20, 78, 0.68);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 24px;
+      padding: 34px;
+      backdrop-filter: blur(12px);
       display: grid;
-      gap: 24px;
+      gap: 28px;
+      box-shadow: 0 25px 55px rgba(1, 5, 25, 0.55);
     }
 
     .ggs-booking-status {
@@ -146,24 +226,33 @@ GGs Only dedicated booking request section.
 
     .ggs-booking-field {
       display: grid;
-      gap: 6px;
+      gap: 8px;
       font-size: 14px;
     }
 
     .ggs-booking-field span {
       font-weight: 600;
       letter-spacing: 0.3px;
+      color: rgba(255, 255, 255, 0.88);
     }
 
     .ggs-booking-field input,
     .ggs-booking-field textarea {
       width: 100%;
       border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      background: rgba(3, 8, 38, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(3, 8, 38, 0.55);
       color: #f5f8ff;
       padding: 11px 14px;
       font-size: 15px;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .ggs-booking-field input:focus,
+    .ggs-booking-field textarea:focus {
+      outline: none;
+      border-color: rgba(105, 176, 255, 0.7);
+      box-shadow: 0 0 0 2px rgba(105, 176, 255, 0.2);
     }
 
     .ggs-booking-field textarea {
@@ -188,13 +277,14 @@ GGs Only dedicated booking request section.
     .ggs-booking-submit {
       border: none;
       border-radius: 14px;
-      padding: 12px 24px;
-      font-size: 16px;
+      padding: 13px 32px;
+      font-size: 17px;
       font-weight: 700;
-      background: linear-gradient(135deg, #69b0ff, #4ea3ff);
+      background: linear-gradient(135deg, #9dc1ff, #4ea3ff);
       color: #041022;
       cursor: pointer;
       transition: transform 0.15s ease, opacity 0.15s ease;
+      box-shadow: 0 15px 35px rgba(78, 163, 255, 0.35);
     }
 
     .ggs-booking-submit:hover {
