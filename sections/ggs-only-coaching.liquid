@@ -1,10 +1,11 @@
 {% comment %}
-GGs Only Coaching section
-- Dark blue gradient hero
-- Age focus callout (18–23 default)
-- Two offer cards (default pricing $20 and $35 per hour)
-- Grand Champion 2 percentile marker
-- Optional contact form for inquiries (no payments processed here)
+GGs Only x ZCash themed coaching landing section.
+Features:
+- Animated hero with polygonal background
+- Slider for ZCash ecosystem highlights
+- Offer cards with CTA to booking page
+- Percentile marker with booking pitch + GC1 disclaimer
+- Optional contact form
 {% endcomment %}
 
 {% liquid
@@ -26,94 +27,170 @@ GGs Only Coaching section
   if booking_url == blank
     assign booking_url = '/pages/ggs-only-booking'
   endif
+  assign slider_count = 0
+  for block in section.blocks
+    if block.type == 'zcash_slide'
+      assign slider_count = slider_count | plus: 1
+    endif
+  endfor
 %}
 
-<section class="ggs-only-coaching">
+<section id="section-{{ section.id }}" class="ggs-only-coaching">
   <div class="ggs-only-wrap">
-    <header class="ggs-only-hero">
-      {% if section.settings.age_range != blank %}
-        <span class="ggs-only-age">Age focus {{ section.settings.age_range }}</span>
-      {% endif %}
-      <h1 class="ggs-only-title">{{ section.settings.shop_title | default: 'GGs Only' }}</h1>
-      <p class="ggs-only-subtitle">{{ section.settings.subtitle | default: 'Rocket League coaching for 18–23 year olds' }}</p>
+    <header class="ggs-only-hero" data-animate="fade-up">
+      <div class="ggs-only-hero-copy">
+        <span class="ggs-only-pill">{{ section.settings.hero_badge | default: 'ZCash Performance Lab' }}</span>
+        <h1 class="ggs-only-title">{{ section.settings.shop_title | default: 'GGs Only' }}</h1>
+        <p class="ggs-only-subtitle">{{ section.settings.subtitle | default: 'Guiding ZCash competitors and community leaders through focused coaching for 18–23 year olds.' }}</p>
+        {% if section.settings.age_range != blank %}
+          <p class="ggs-only-meta">Age focus {{ section.settings.age_range }}</p>
+        {% endif %}
+        <div class="ggs-only-hero-cta">
+          <a class="ggs-only-btn" href="{{ booking_url }}">{{ section.settings.hero_cta_label | default: 'Book a discovery call' }}</a>
+          {% if section.settings.hero_cta_secondary_label != blank %}
+            <a class="ggs-only-link" href="{{ section.settings.hero_cta_secondary_url | default: '/blogs/news' }}">
+              {{ section.settings.hero_cta_secondary_label }}
+            </a>
+          {% endif %}
+        </div>
+      </div>
+      <div class="ggs-only-hero-visual">
+        <div class="ggs-only-hero-node">
+          <span>Privacy-grade drills</span>
+          <span>Signal-ready reviews</span>
+          <span>Chain narratives</span>
+        </div>
+        <div class="ggs-only-hero-glow"></div>
+      </div>
     </header>
 
-    <div class="ggs-only-offers">
-      {% if section.blocks.size > 0 %}
-        {% for block in section.blocks %}
-          {% if block.type == 'offer' %}
-            <article class="ggs-only-card" {{ block.shopify_attributes }}>
-              <div class="ggs-only-card-body">
-                <h3 class="ggs-only-card-title">{{ block.settings.title }}</h3>
-                <p class="ggs-only-card-desc">{{ block.settings.desc }}</p>
-                {% if block.settings.price != blank %}
-                  <div class="ggs-only-price">
-                    ${{ block.settings.price }}
-                    <span class="ggs-only-price-unit">/ hr</span>
+    {% if slider_count > 0 %}
+      <section class="ggs-zcash-slider" data-animate="fade-up">
+        <div class="ggs-zcash-slider-head">
+          <div>
+            <p class="ggs-only-pill ggs-only-pill--subtle">{{ section.settings.slider_eyebrow | default: 'ZCash ecosystem pulse' }}</p>
+            <h2>{{ section.settings.slider_title | default: 'Stay synced with the builders' }}</h2>
+            <p>{{ section.settings.slider_subtitle | default: 'Slides update as you add more highlights: wallets, researchers, or live activations.' }}</p>
+          </div>
+          <div class="ggs-zcash-slider-controls">
+            <button type="button" aria-label="Previous highlight" data-slider-prev>
+              <span>&larr;</span>
+            </button>
+            <button type="button" aria-label="Next highlight" data-slider-next>
+              <span>&rarr;</span>
+            </button>
+          </div>
+        </div>
+        <div class="ggs-zcash-slider-shell" data-slider>
+          <div class="ggs-zcash-slider-track" data-slider-track>
+            {% for block in section.blocks %}
+              {% if block.type == 'zcash_slide' %}
+                <article class="ggs-zcash-slide" {{ block.shopify_attributes }}>
+                  <div class="ggs-zcash-media">
+                    {% if block.settings.image != blank %}
+                      {{ block.settings.image | image_url: width: 700 | image_tag: loading: 'lazy', alt: block.settings.title }}
+                    {% else %}
+                      <div class="ggs-zcash-placeholder">
+                        <span>ZCash</span>
+                      </div>
+                    {% endif %}
                   </div>
-                {% endif %}
-                {% liquid
-                  assign cta_label = block.settings.cta_label | default: 'Book a session'
-                  assign cta_url = block.settings.cta_url
-                  if cta_url == blank
-                    assign cta_url = booking_url
-                  endif
-                %}
-                <a class="ggs-only-btn" href="{{ cta_url }}">{{ cta_label }}</a>
-              </div>
-            </article>
-          {% endif %}
-        {% endfor %}
-      {% else %}
+                  <div class="ggs-zcash-body">
+                    <p class="ggs-zcash-tag">{{ block.settings.tag | default: 'ZEC' }}</p>
+                    <h3>{{ block.settings.title }}</h3>
+                    <p>{{ block.settings.caption }}</p>
+                    {% if block.settings.link_url != blank %}
+                      <a class="ggs-zcash-link" href="{{ block.settings.link_url }}">{{ block.settings.link_label | default: 'Open highlight' }}</a>
+                    {% endif %}
+                  </div>
+                </article>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+    {% endif %}
+
+    <div class="ggs-only-offers" data-animate="fade-up">
+      {% assign offer_blocks = 0 %}
+      {% for block in section.blocks %}
+        {% if block.type == 'offer' %}
+          {% assign offer_blocks = offer_blocks | plus: 1 %}
+          <article class="ggs-only-card" {{ block.shopify_attributes }}>
+            <div class="ggs-only-card-body">
+              <p class="ggs-only-card-pill">{{ block.settings.tier_label | default: 'Session' }}</p>
+              <h3 class="ggs-only-card-title">{{ block.settings.title }}</h3>
+              <p class="ggs-only-card-desc">{{ block.settings.desc }}</p>
+              {% if block.settings.price != blank %}
+                <div class="ggs-only-price">
+                  ${{ block.settings.price }}
+                  <span class="ggs-only-price-unit">/ hr</span>
+                </div>
+              {% endif %}
+              {% liquid
+                assign cta_label = block.settings.cta_label | default: 'Book a session'
+                assign cta_url = block.settings.cta_url
+                if cta_url == blank
+                  assign cta_url = booking_url
+                endif
+              %}
+              <a class="ggs-only-btn ggs-only-btn-small" href="{{ cta_url }}">{{ cta_label }}</a>
+            </div>
+          </article>
+        {% endif %}
+      {% endfor %}
+
+      {% if offer_blocks == 0 %}
         <article class="ggs-only-card">
           <div class="ggs-only-card-body">
+            <p class="ggs-only-card-pill">Starter</p>
             <h3 class="ggs-only-card-title">Basic Training</h3>
-            <p class="ggs-only-card-desc">Fundamentals, mechanics check, and focused drills to level up consistency.</p>
+            <p class="ggs-only-card-desc">Mechanics audits, privacy storytelling, and intentional drills.</p>
             <div class="ggs-only-price">$20 <span class="ggs-only-price-unit">/ hr</span></div>
-            <a class="ggs-only-btn" href="{{ booking_url }}">Book a session</a>
+            <a class="ggs-only-btn ggs-only-btn-small" href="{{ booking_url }}">Book a session</a>
           </div>
         </article>
         <article class="ggs-only-card">
           <div class="ggs-only-card-body">
+            <p class="ggs-only-card-pill">Deep dive</p>
             <h3 class="ggs-only-card-title">Advanced Coaching</h3>
-            <p class="ggs-only-card-desc">Replay analysis, rotations, and detailed training packs tailored to your goals.</p>
+            <p class="ggs-only-card-desc">Narrative reviews, rotations, and long-form accountability between calls.</p>
             <div class="ggs-only-price">$35 <span class="ggs-only-price-unit">/ hr</span></div>
-            <a class="ggs-only-btn" href="{{ booking_url }}">Book a session</a>
+            <a class="ggs-only-btn ggs-only-btn-small" href="{{ booking_url }}">Book a session</a>
           </div>
         </article>
       {% endif %}
     </div>
 
-    <section class="ggs-only-stats">
-      <h2 class="ggs-only-stats-title">Why players book with GGs Only</h2>
-      <p class="ggs-only-stats-sub">We benchmark every plan against {{ section.settings.gc_rank | default: 'Grand Champion 2' }} expectations, so you know exactly what top-tier play looks like.</p>
+    <section class="ggs-only-stats" data-animate="fade-up">
+      <p class="ggs-only-pill ggs-only-pill--subtle">Why ZCash grinders book with us</p>
+      <h2>Benchmarked to {{ section.settings.gc_rank | default: 'Grand Champion 2' }}</h2>
+      <p class="ggs-only-stats-sub">Every plan references top {{ pct_value }}% play so you know exactly how far you are from GC2 execution.</p>
       <div class="ggs-only-bar">
         <div class="ggs-only-bar-fill"></div>
-        <span class="ggs-only-marker" style="left: {{ pct_value }}%;" aria-label="Top {{ pct_value }} percent"></span>
+        <span class="ggs-only-marker" style="left: {{ pct_value }}%;"></span>
       </div>
-      <div class="ggs-only-bar-label">
-        {{ section.settings.gc_rank | default: 'GC2' }} &asymp; Top {{ pct_value }}%
-      </div>
+      <div class="ggs-only-bar-label">{{ section.settings.gc_rank | default: 'GC2' }} ≈ Top {{ pct_value }}%</div>
       <ul class="ggs-only-stats-benefits">
-        <li>Replay-first reviews that surface the decisions costing you rank.</li>
-        <li>Targeted mechanics drills built for {{ section.settings.age_range | default: '18–23' }} players.</li>
-        <li>Accountability checkpoints between sessions to keep the climb steady.</li>
+        <li>Polygonal playbooks pair on-chain narratives with tangible drills.</li>
+        <li>Fade-in reviews keep you focused on the next measurable habit.</li>
+        <li>Direct routing to {{ booking_url }} for structured follow ups.</li>
       </ul>
-      <p class="ggs-only-stats-note ggs-only-stats-limit">We currently coach players up to Grand Champion 1. If you are higher, reach out and we’ll point you to trusted partners.</p>
-      <p class="ggs-only-stats-note">Percentile shown is for illustration—swap in your official stats anytime.</p>
+      <p class="ggs-only-stats-note ggs-only-stats-limit">We currently coach players up to Grand Champion 1. Above GC1? Drop us a note and we’ll point you to partners.</p>
     </section>
 
     {% if section.settings.show_contact %}
-      <section id="ggs-only-contact" class="ggs-only-contact">
+      <section id="ggs-only-contact" class="ggs-only-contact" data-animate="fade-up">
         <div class="ggs-only-contact-inner">
           <h2 class="ggs-only-contact-title">Contact &amp; Booking</h2>
-          <p class="ggs-only-contact-copy">Have questions or ready to schedule time? Send a message and we will respond shortly.</p>
+          <p class="ggs-only-contact-copy">Send a quick message—tell us where you’re stuck in the ZCash climb and when you’d like to meet.</p>
           {% form 'contact', id: 'GGsOnlyContactForm' %}
             <div class="ggs-only-form-grid">
               <input type="text" id="GGsOnlyContactName" name="contact[name]" placeholder="Your name" required>
               <input type="email" id="GGsOnlyContactEmail" name="contact[email]" placeholder="Your email" required>
-              <input type="text" id="GGsOnlyContactAge" name="contact[age]" placeholder="Age ({{ section.settings.age_range | default: '18–23' }})">
-              <textarea id="GGsOnlyContactMessage" name="contact[body]" rows="4" placeholder="Tell us your rank, goals, or preferred schedule"></textarea>
+              <input type="text" id="GGsOnlyContactHandle" name="contact[handle]" placeholder="Discord or X handle">
+              <input type="text" id="GGsOnlyContactRank" name="contact[rank]" placeholder="Current rank (e.g., C3)">
+              <textarea id="GGsOnlyContactMessage" name="contact[body]" rows="4" placeholder="What do you want from coaching?"></textarea>
             </div>
             <button type="submit" class="ggs-only-btn ggs-only-btn-outline">Send</button>
           {% endform %}
@@ -124,92 +201,362 @@ GGs Only Coaching section
 
   <style>
     .ggs-only-coaching {
-      --bg-top: #405bff;
-      --bg-bottom: #000e6b;
-      --text-base: #ffffff;
-      --text-muted: #d6dcff;
-      --accent: #8db4ff;
-      --card-bg: rgba(0, 14, 107, 0.5);
-      --card-border: rgba(255, 255, 255, 0.18);
-      --btn-bg: #69b0ff;
-      padding: min(6vw, 64px) 0;
-      background: linear-gradient(135deg, var(--bg-top), var(--bg-bottom));
-      color: var(--text-base);
+      position: relative;
+      overflow: hidden;
+      padding: min(7vw, 72px) 0;
+      background: radial-gradient(circle at 20% 20%, rgba(255, 212, 71, 0.15), transparent 45%),
+        radial-gradient(circle at 80% 0%, rgba(255, 138, 61, 0.15), transparent 50%),
+        linear-gradient(135deg, #050506, #160931 70%);
+      color: #fdfdfd;
+    }
+
+    .ggs-only-coaching::before,
+    .ggs-only-coaching::after {
+      content: '';
+      position: absolute;
+      width: 420px;
+      height: 420px;
+      background: linear-gradient(135deg, rgba(255, 212, 71, 0.18), rgba(255, 138, 61, 0.18));
+      filter: blur(0px);
+      opacity: 0.8;
+      clip-path: polygon(0% 40%, 20% 0%, 100% 15%, 80% 80%, 15% 100%);
+      mix-blend-mode: screen;
+      z-index: 0;
+    }
+
+    .ggs-only-coaching::before {
+      top: -140px;
+      right: -100px;
+    }
+
+    .ggs-only-coaching::after {
+      bottom: -160px;
+      left: -100px;
     }
 
     .ggs-only-wrap {
-      width: min(1080px, 92%);
+      position: relative;
+      z-index: 1;
+      width: min(1100px, 92%);
       margin: 0 auto;
+      display: grid;
+      gap: 36px;
     }
 
     .ggs-only-hero {
-      text-align: center;
       display: grid;
-      gap: 12px;
-      margin-bottom: 32px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 32px;
+      align-items: center;
     }
 
-    .ggs-only-age {
-      display: inline-block;
-      align-self: center;
-      padding: 6px 14px;
+    .ggs-only-hero-copy {
+      display: grid;
+      gap: 14px;
+    }
+
+    .ggs-only-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      padding: 6px 16px;
       border-radius: 999px;
-      background: rgba(90, 169, 255, 0.15);
-      color: var(--accent);
-      font-size: 14px;
-      font-weight: 600;
-      letter-spacing: 0.3px;
+      background: rgba(255, 212, 71, 0.15);
+      color: #ffd447;
+    }
+
+    .ggs-only-pill--subtle {
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.8);
     }
 
     .ggs-only-title {
       margin: 0;
-      font-size: clamp(32px, 6vw, 58px);
+      font-size: clamp(36px, 6vw, 64px);
       letter-spacing: 0.4px;
-      line-height: 1.05;
     }
 
     .ggs-only-subtitle {
       margin: 0;
-      font-size: clamp(16px, 2.2vw, 20px);
-      color: var(--text-muted);
+      font-size: clamp(16px, 2.4vw, 20px);
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.6;
+    }
+
+    .ggs-only-meta {
+      margin: 0;
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.65);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .ggs-only-hero-cta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 18px;
+      align-items: center;
+    }
+
+    .ggs-only-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 22px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #ffd447, #ff8a3d);
+      color: #0a0700;
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 16px 32px rgba(255, 138, 61, 0.35);
+      transition: transform 0.18s ease, opacity 0.18s ease;
+    }
+
+    .ggs-only-btn:hover {
+      transform: translateY(-2px);
+      opacity: 0.92;
+    }
+
+    .ggs-only-btn-small {
+      padding: 10px 18px;
+      border-radius: 12px;
+      background: rgba(255, 212, 71, 0.15);
+      color: #ffd447;
+      box-shadow: none;
+    }
+
+    .ggs-only-btn-small:hover {
+      background: rgba(255, 212, 71, 0.25);
+    }
+
+    .ggs-only-btn-outline {
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      background: transparent;
+      color: #ffffff;
+      box-shadow: none;
+      padding: 10px 22px;
+    }
+
+    .ggs-only-link {
+      color: #ffd447;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .ggs-only-hero-visual {
+      position: relative;
+      min-height: 260px;
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(12, 10, 25, 0.8);
+      overflow: hidden;
+    }
+
+    .ggs-only-hero-node {
+      position: absolute;
+      inset: 2rem;
+      display: grid;
+      gap: 18px;
+      font-size: 15px;
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .ggs-only-hero-node span {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ggs-only-hero-node span::before {
+      content: '';
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      background: linear-gradient(135deg, #ffd447, #ff8a3d);
+    }
+
+    .ggs-only-hero-glow {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 138, 61, 0.6), transparent 70%);
+      filter: blur(10px);
+      top: 10%;
+      right: 12%;
+      animation: pulseGlow 6s ease-in-out infinite;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(0.9); opacity: 0.6; }
+      50% { transform: scale(1.1); opacity: 1; }
+    }
+
+    .ggs-zcash-slider {
+      display: grid;
+      gap: 18px;
+    }
+
+    .ggs-zcash-slider-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .ggs-zcash-slider-head h2 {
+      margin: 6px 0;
+      font-size: 26px;
+    }
+
+    .ggs-zcash-slider-head p {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    .ggs-zcash-slider-shell {
+      position: relative;
+    }
+
+    .ggs-zcash-slider-track {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(260px, 320px);
+      gap: 18px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      scroll-snap-type: x mandatory;
+    }
+
+    .ggs-zcash-slider-track::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .ggs-zcash-slider-track::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 999px;
+    }
+
+    .ggs-zcash-slide {
+      scroll-snap-align: start;
+      background: rgba(6, 5, 12, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 18px;
+      overflow: hidden;
+      display: grid;
+      gap: 10px;
+    }
+
+    .ggs-zcash-media img,
+    .ggs-zcash-placeholder {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .ggs-zcash-placeholder {
+      background: linear-gradient(135deg, rgba(255, 212, 71, 0.2), rgba(255, 138, 61, 0.2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: rgba(5, 5, 5, 0.7);
+    }
+
+    .ggs-zcash-body {
+      padding: 16px 18px 20px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .ggs-zcash-tag {
+      margin: 0;
+      font-size: 12px;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.6);
+      letter-spacing: 0.3px;
+    }
+
+    .ggs-zcash-body h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .ggs-zcash-body p {
+      margin: 0;
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    .ggs-zcash-link {
+      color: #ffd447;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .ggs-zcash-slider-controls {
+      display: flex;
+      gap: 12px;
+    }
+
+    .ggs-zcash-slider-controls button {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      background: transparent;
+      color: #ffffff;
+      cursor: pointer;
+      font-size: 18px;
+      transition: background 0.18s ease, transform 0.18s ease;
+    }
+
+    .ggs-zcash-slider-controls button:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
     }
 
     .ggs-only-offers {
       display: grid;
-      gap: 20px;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      margin-bottom: 38px;
+      gap: 20px;
     }
 
     .ggs-only-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
+      background: rgba(6, 5, 12, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 20px;
-      overflow: hidden;
-      backdrop-filter: blur(8px);
+      padding: 18px;
+      backdrop-filter: blur(10px);
       transition: transform 0.18s ease, border-color 0.18s ease;
     }
 
     .ggs-only-card:hover {
       transform: translateY(-4px);
-      border-color: rgba(149, 174, 215, 0.4);
+      border-color: rgba(255, 212, 71, 0.4);
     }
 
-    .ggs-only-card-body {
-      padding: 22px;
-      display: grid;
-      gap: 12px;
+    .ggs-only-card-pill {
+      margin: 0;
+      font-size: 12px;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.6);
+      letter-spacing: 0.4px;
     }
 
     .ggs-only-card-title {
-      margin: 0;
+      margin: 6px 0;
       font-size: 22px;
     }
 
     .ggs-only-card-desc {
-      margin: 0;
-      color: var(--text-muted);
-      font-size: 15px;
+      margin: 0 0 10px;
+      color: rgba(255, 255, 255, 0.75);
       line-height: 1.6;
     }
 
@@ -222,59 +569,37 @@ GGs Only Coaching section
     }
 
     .ggs-only-price-unit {
-      font-size: 14px;
-      font-weight: 400;
-      color: var(--text-muted);
-    }
-
-    .ggs-only-btn {
-      display: inline-block;
-      padding: 11px 18px;
-      border-radius: 14px;
-      background: var(--btn-bg);
-      color: #041022;
-      font-weight: 700;
-      text-decoration: none;
-      transition: transform 0.18s ease, opacity 0.18s ease;
-    }
-
-    .ggs-only-btn:hover {
-      transform: translateY(-2px);
-      opacity: 0.92;
-    }
-
-    .ggs-only-btn-outline {
-      margin-top: 14px;
-      background: transparent;
-      color: var(--text-base);
-      border: 1px solid var(--card-border);
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.6);
     }
 
     .ggs-only-stats {
-      text-align: center;
       display: grid;
-      gap: 12px;
-      margin-bottom: 44px;
+      gap: 14px;
+      text-align: center;
+      background: rgba(6, 5, 12, 0.75);
+      border-radius: 22px;
+      padding: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
     }
 
-    .ggs-only-stats-title {
+    .ggs-only-stats h2 {
       margin: 0;
-      font-size: 24px;
+      font-size: 26px;
     }
 
     .ggs-only-stats-sub {
       margin: 0;
-      color: var(--text-muted);
-      font-size: 15px;
+      color: rgba(255, 255, 255, 0.75);
     }
 
     .ggs-only-bar {
       position: relative;
       width: min(720px, 92%);
-      margin: 0 auto;
       height: 12px;
+      margin: 0 auto;
       border-radius: 999px;
-      border: 1px solid var(--card-border);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       background: rgba(255, 255, 255, 0.08);
       overflow: hidden;
     }
@@ -282,17 +607,17 @@ GGs Only Coaching section
     .ggs-only-bar-fill {
       position: absolute;
       inset: 0;
-      background: linear-gradient(90deg, rgba(90, 169, 255, 0.3), rgba(105, 176, 255, 0.05));
+      background: linear-gradient(90deg, rgba(255, 212, 71, 0.35), rgba(255, 138, 61, 0.15));
     }
 
     .ggs-only-marker {
       position: absolute;
-      top: -5px;
+      top: -6px;
       width: 2px;
-      height: 22px;
-      background: var(--accent);
+      height: 24px;
+      background: #ffd447;
+      box-shadow: 0 0 0 4px rgba(255, 212, 71, 0.25);
       border-radius: 1px;
-      box-shadow: 0 0 0 4px rgba(105, 176, 255, 0.25);
     }
 
     .ggs-only-bar-label {
@@ -300,55 +625,49 @@ GGs Only Coaching section
     }
 
     .ggs-only-stats-benefits {
-      margin: 8px auto 0;
+      margin: 0 auto;
       padding: 0;
       list-style: none;
       display: grid;
-      gap: 10px;
-      max-width: min(620px, 100%);
+      gap: 8px;
       text-align: left;
+      max-width: 600px;
     }
 
     .ggs-only-stats-benefits li {
       position: relative;
-      padding-left: 24px;
-      font-size: 15px;
-      line-height: 1.6;
-      color: var(--text-base);
+      padding-left: 20px;
+      color: rgba(255, 255, 255, 0.85);
     }
 
     .ggs-only-stats-benefits li::before {
-      content: '>';
+      content: '◆';
       position: absolute;
       left: 0;
-      color: var(--accent);
-      font-size: 22px;
-      line-height: 1;
-      top: -2px;
+      color: #ff8a3d;
+      font-size: 12px;
     }
 
     .ggs-only-stats-note {
       margin: 0;
       font-size: 13px;
-      color: var(--text-muted);
+      color: rgba(255, 255, 255, 0.65);
     }
 
     .ggs-only-stats-limit {
-      color: var(--text-base);
+      color: #ffd447;
     }
 
     .ggs-only-contact {
-      margin-top: 32px;
-      background: rgba(12, 27, 52, 0.75);
-      border: 1px solid var(--card-border);
-      border-radius: 22px;
-      padding: 24px;
-      backdrop-filter: blur(10px);
+      background: rgba(6, 5, 12, 0.8);
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 28px;
     }
 
     .ggs-only-contact-inner {
       display: grid;
-      gap: 16px;
+      gap: 12px;
     }
 
     .ggs-only-contact-title {
@@ -358,44 +677,102 @@ GGs Only Coaching section
 
     .ggs-only-contact-copy {
       margin: 0;
-      color: var(--text-muted);
+      color: rgba(255, 255, 255, 0.75);
     }
 
     .ggs-only-form-grid {
       display: grid;
-      gap: 14px;
+      gap: 12px;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .ggs-only-form-grid textarea {
+      grid-column: 1 / -1;
     }
 
     .ggs-only-form-grid input,
     .ggs-only-form-grid textarea {
-      width: 100%;
       border-radius: 12px;
-      border: 1px solid var(--card-border);
-      background: rgba(255, 255, 255, 0.06);
-      color: var(--text-base);
-      padding: 12px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(5, 5, 8, 0.7);
+      color: #ffffff;
+      padding: 11px 14px;
     }
 
     .ggs-only-form-grid input::placeholder,
     .ggs-only-form-grid textarea::placeholder {
-      color: var(--text-muted);
+      color: rgba(255, 255, 255, 0.5);
     }
 
-    @media (max-width: 600px) {
-      .ggs-only-card-body {
-        padding: 18px;
+    [data-animate] {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    [data-animate].is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      [data-animate] {
+        opacity: 1;
+        transform: none;
+      }
+      .ggs-only-btn,
+      .ggs-zcash-slider-controls button {
+        transition: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .ggs-zcash-slider-track {
+        grid-auto-columns: minmax(240px, 80%);
       }
 
-      .ggs-only-price {
-        font-size: 26px;
-      }
-
-      .ggs-only-contact {
-        padding: 20px;
+      .ggs-only-hero-visual {
+        min-height: 220px;
       }
     }
   </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const section = document.getElementById('section-{{ section.id }}');
+      if (!section) return;
+
+      const animated = section.querySelectorAll('[data-animate]');
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.2 });
+        animated.forEach(el => observer.observe(el));
+      } else {
+        animated.forEach(el => el.classList.add('is-visible'));
+      }
+
+      const slider = section.querySelector('[data-slider]');
+      if (slider) {
+        const track = slider.querySelector('[data-slider-track]');
+        const prev = section.querySelector('[data-slider-prev]');
+        const next = section.querySelector('[data-slider-next]');
+        if (track && prev && next) {
+          const scrollSlider = direction => {
+            const amount = track.clientWidth * 0.85 * direction;
+            track.scrollBy({ left: amount, behavior: 'smooth' });
+          };
+          prev.addEventListener('click', () => scrollSlider(-1));
+          next.addEventListener('click', () => scrollSlider(1));
+        }
+      }
+    });
+  </script>
 </section>
 
 {% schema %}
@@ -404,47 +781,20 @@ GGs Only Coaching section
   "tag": "section",
   "class": "section",
   "settings": [
-    {
-      "type": "text",
-      "id": "shop_title",
-      "label": "Hero title",
-      "default": "GGs Only"
-    },
-    {
-      "type": "text",
-      "id": "subtitle",
-      "label": "Hero subtitle",
-      "default": "Rocket League coaching for 18–23 year olds"
-    },
-    {
-      "type": "text",
-      "id": "age_range",
-      "label": "Age focus label",
-      "default": "18–23"
-    },
-    {
-      "type": "text",
-      "id": "gc_rank",
-      "label": "Featured rank label",
-      "default": "Grand Champion 2"
-    },
-    {
-      "type": "number",
-      "id": "gc_percentile",
-      "label": "Percentile (Top X%)",
-      "info": "Enter a number between 0 and 100. Leave blank to show 0.6 by default."
-    },
-    {
-      "type": "url",
-      "id": "booking_url",
-      "label": "Default booking page URL"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_contact",
-      "label": "Show contact form",
-      "default": true
-    }
+    { "type": "inline_richtext", "id": "hero_badge", "label": "Hero eyebrow", "default": "ZCash Performance Lab" },
+    { "type": "text", "id": "shop_title", "label": "Hero title", "default": "GGs Only x ZCash" },
+    { "type": "text", "id": "subtitle", "label": "Hero subtitle", "default": "Coaching for ZCash community members chasing Grand Champion play." },
+    { "type": "text", "id": "age_range", "label": "Age focus label", "default": "18–23" },
+    { "type": "text", "id": "hero_cta_label", "label": "Primary CTA label", "default": "Book a discovery call" },
+    { "type": "url", "id": "hero_cta_secondary_url", "label": "Secondary CTA link" },
+    { "type": "text", "id": "hero_cta_secondary_label", "label": "Secondary CTA label", "default": "View curriculum" },
+    { "type": "text", "id": "gc_rank", "label": "Featured rank label", "default": "Grand Champion 2" },
+    { "type": "number", "id": "gc_percentile", "label": "Percentile (Top X%)", "info": "Enter 0–100. Blank defaults to 0.6." },
+    { "type": "url", "id": "booking_url", "label": "Default booking page URL" },
+    { "type": "text", "id": "slider_eyebrow", "label": "Slider eyebrow", "default": "ZCash ecosystem pulse" },
+    { "type": "text", "id": "slider_title", "label": "Slider heading", "default": "Stay synced with the builders" },
+    { "type": "text", "id": "slider_subtitle", "label": "Slider subheading", "default": "Highlight Zashi, Zooko, or any signal you want on rotation." },
+    { "type": "checkbox", "id": "show_contact", "label": "Show contact form", "default": true }
   ],
   "blocks": [
     {
@@ -452,35 +802,24 @@ GGs Only Coaching section
       "name": "Offer card",
       "limit": 2,
       "settings": [
-        {
-          "type": "text",
-          "id": "title",
-          "label": "Title",
-          "default": "Basic Training"
-        },
-        {
-          "type": "text",
-          "id": "desc",
-          "label": "Description",
-          "default": "Fundamentals, mechanics check, and focused drills for consistent growth."
-        },
-        {
-          "type": "number",
-          "id": "price",
-          "label": "Price (USD/hour)",
-          "default": 20
-        },
-        {
-          "type": "url",
-          "id": "cta_url",
-          "label": "Button URL (optional)"
-        },
-        {
-          "type": "text",
-          "id": "cta_label",
-          "label": "Button label",
-          "default": "Book a session"
-        }
+        { "type": "text", "id": "tier_label", "label": "Small label", "default": "Session" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Basic Training" },
+        { "type": "text", "id": "desc", "label": "Description", "default": "Fundamentals, mechanics check, replay review." },
+        { "type": "number", "id": "price", "label": "Price (USD/hour)", "default": 20 },
+        { "type": "url", "id": "cta_url", "label": "Button URL (optional)" },
+        { "type": "text", "id": "cta_label", "label": "Button label", "default": "Book a session" }
+      ]
+    },
+    {
+      "type": "zcash_slide",
+      "name": "ZCash highlight",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Slide image" },
+        { "type": "text", "id": "tag", "label": "Corner tag", "default": "ZEC" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Zashi Wallet" },
+        { "type": "text", "id": "caption", "label": "Caption", "default": "Mobile wallet shipping shielded support." },
+        { "type": "url", "id": "link_url", "label": "Link URL" },
+        { "type": "text", "id": "link_label", "label": "Link label", "default": "Learn more" }
       ]
     }
   ],
@@ -488,24 +827,10 @@ GGs Only Coaching section
     {
       "name": "GGs Only Coaching",
       "blocks": [
-        {
-          "type": "offer",
-          "settings": {
-            "title": "Basic Training",
-            "desc": "Fundamentals, mechanics check, and focused drills for consistent growth.",
-            "price": 20,
-            "cta_label": "Book a session"
-          }
-        },
-        {
-          "type": "offer",
-          "settings": {
-            "title": "Advanced Coaching",
-            "desc": "Replay analysis, rotations, and game-sense coaching tailored to your climb.",
-            "price": 35,
-            "cta_label": "Book a session"
-          }
-        }
+        { "type": "zcash_slide", "settings": { "title": "Zashi Wallet", "caption": "Community wallet headed to mainnet.", "tag": "Wallet" } },
+        { "type": "zcash_slide", "settings": { "title": "Zooko on X", "caption": "Founder threads worth tracking.", "tag": "Leadership" } },
+        { "type": "offer", "settings": { "tier_label": "Starter", "title": "Basic Training", "desc": "Mechanics check, targeted drills.", "price": 20, "cta_label": "Book a session" } },
+        { "type": "offer", "settings": { "tier_label": "Deep dive", "title": "Advanced Coaching", "desc": "Narrative reviews, accountability.", "price": 35, "cta_label": "Book a session" } }
       ]
     }
   ]
